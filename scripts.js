@@ -62,12 +62,34 @@ function playRound(playerSelection, computerSelection) {
                 return "It's a tie!";
         }
     }
-    // Player enters something else
+    // Player enters something else: replay round
     else {
-        return "That wasn't a valid play. Please enter 'rock' 'paper' or 'scissors'";
+        return playRound(prompt(`Invalid entry: Enter 'rock' 'paper' or 'scissors' to play!`), computerSelection);
     }
-  }
+}
 
-const playerSelection = "SCissor";
-const computerSelection = getComputerChoice();
-console.log(playRound(playerSelection, computerSelection));
+function game() {
+    // Declare variables
+    let win = 0;
+    let lose = 0;
+    let tie = 0;
+
+    // Play the 5 rounds
+    for (let i = 0; i < 5; i++) {
+        let results = playRound(prompt(`Round ${i + 1}: Enter 'rock' 'paper' or 'scissors' to play!`), getComputerChoice()) // Play a round
+        console.log(results);
+
+        // Track score
+        if (results[4] == "W") {win++;}
+        else if (results[4] == "L") {lose++;}
+        else {tie++;}
+     }
+
+     // Display final results
+     console.log(`\nResults: ${win} Win(s), ${lose} Loss(es), and ${tie} Tie(s).`)
+     if (win > lose) {console.log("\nYou Win!");}
+     else if (lose > win) {console.log("\nBetter luck next time.");}
+     else {console.log("\nIt's a tied game!");}
+}
+
+game(); // Begin the game
