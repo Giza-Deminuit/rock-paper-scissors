@@ -62,10 +62,39 @@ function playRound(playerSelection, computerSelection) {
                 return "It's a tie!";
         }
     }
-    // Player enters something else: replay round
-    else {
-        return playRound(prompt(`Invalid entry: Enter 'rock' 'paper' or 'scissors' to play!`), computerSelection);
-    }
+}
+
+function displayResults(win, tie, lose) { 
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach ((button) => {
+        button.disabled = true;
+    });
+
+    const h1FinalResults = document.querySelector('h1');
+    
+    // Display final results
+    h1FinalResults.textContent = `\nResults: ${win} Win(s), ${lose} Loss(es), and ${tie} Tie(s).`;
+    if (win > lose) {h1FinalResults.textContent += "   You Win!";}
+    else if (lose > win) {h1FinalResults.textContent += "   Better luck next time.";}
+    else {h1FinalResults.textContent += "   It's a tied game!";}
+
+    // Display play again button
+    const btnPlayAgain = document.createElement('button');
+    btnPlayAgain.textContent = "Play Again?";
+    
+    const playAgain = document.querySelector('#playAgain');
+    playAgain.appendChild(btnPlayAgain);
+
+    const h2ResultsPerRound = document.querySelector('h2');
+
+    btnPlayAgain.addEventListener('click', () => {
+        btnPlayAgain.remove(); // Removes the play again button
+        h1FinalResults.textContent = '';
+        h2ResultsPerRound.textContent = '';
+        buttons.forEach ((button) => {
+            button.disabled = false;
+        });
+    })
 }
 
 function game() {
@@ -73,23 +102,39 @@ function game() {
     let win = 0;
     let lose = 0;
     let tie = 0;
-
+    let countRoundsPlayed = 0;
+    
     // Play the 5 rounds
-    for (let i = 0; i < 5; i++) {
-        let results = playRound(prompt(`Round ${i + 1}: Enter 'rock' 'paper' or 'scissors' to play!`), getComputerChoice()) // Play a round
-        console.log(results);
+    const buttons = document.querySelectorAll('button');
+    const h2ResultsPerRound = document.querySelector('h2')
 
-        // Track score
-        if (results[4] == "W") {win++;}
-        else if (results[4] == "L") {lose++;}
-        else {tie++;}
-     }
+    // Play round of game upon button click and track number of rounds so far
+    buttons.forEach ((button) => {
+        button.addEventListener('click', () => {
+            if (countRoundsPlayed < 5) {
+                let results = playRound(button.id, getComputerChoice());
+                countRoundsPlayed++;
 
-     // Display final results
-     console.log(`\nResults: ${win} Win(s), ${lose} Loss(es), and ${tie} Tie(s).`)
-     if (win > lose) {console.log("\nYou Win!");}
-     else if (lose > win) {console.log("\nBetter luck next time.");}
-     else {console.log("\nIt's a tied game!");}
+                // Track score
+                if (results[4] == "W") {win++;}
+                else if (results[4] == "L") {lose++;}
+                else {tie++;}
+
+                h2ResultsPerRound.textContent = results;
+            }
+
+            console.log(countRoundsPlayed);
+
+            if (countRoundsPlayed === 5) {
+                countRoundsPlayed = 0;
+                displayResults(win, tie, lose);
+                win = 0;
+                tie = 0;
+                lose = 0;
+            }
+        });
+    });
 }
 
-game(); // Begin the game
+
+game();
